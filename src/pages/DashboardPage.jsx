@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import DashboardLayout from '@/components/DashboardLayout';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Calendar, Briefcase, Clock, PlusCircle } from 'lucide-react';
+import DashboardLayout from '../components/DashboardLayout';
+import DashboardBlock from '../components/DashboardBlock';
+import { Typography, Grid, TextField, Button, Box } from '@mui/material';
+import EventIcon from '@mui/icons-material/Event';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 const DashboardPage = () => {
   // Hardcoded data for now
@@ -39,71 +40,85 @@ const DashboardPage = () => {
 
   return (
     <DashboardLayout>
-      <h1 className="text-2xl font-bold">Welcome to your Dashboard</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Upcoming Holidays
-            </CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
+      <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold' }}>
+        Welcome to your Dashboard
+      </Typography>
+      <Grid container spacing={3}>
+        {/* Quick Entry */}
+        <Grid item xs={12}>
+          <DashboardBlock title="Quick Entry" icon={<AddCircleOutlineIcon />}>
+            <Box component="form" onSubmit={handleQuickEntrySubmit} noValidate>
+              <Grid container spacing={2} alignItems="center">
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    label="Project"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    value={project}
+                    onChange={(e) => setProject(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <TextField
+                    label="Task Description"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    value={task}
+                    onChange={(e) => setTask(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <TextField
+                    label="Hours"
+                    variant="outlined"
+                    size="small"
+                    type="number"
+                    fullWidth
+                    value={hours}
+                    onChange={(e) => setHours(e.target.value)}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Button type="submit" variant="contained" fullWidth>
+                    Log Time
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </DashboardBlock>
+        </Grid>
+
+        {/* Upcoming Public Holidays */}
+        <Grid item xs={12} md={4}>
+          <DashboardBlock title="Upcoming Holidays" icon={<EventIcon />}>
             {upcomingHolidays.map((holiday) => (
-              <div key={holiday.name} className="text-xs text-muted-foreground">
+              <Typography key={holiday.name} variant="body2">
                 {holiday.date}: {holiday.name}
-              </div>
+              </Typography>
             ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Leave Balance</CardTitle>
-            <Briefcase className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{leaveBalance.annual}</div>
-            <p className="text-xs text-muted-foreground">Annual Leave</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Attendance</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{attendanceSummary.workedDays} / {attendanceSummary.totalDays}</div>
-            <p className="text-xs text-muted-foreground">days worked this month</p>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="mt-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Entry</CardTitle>
-            <CardDescription>Log your work for the day.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleQuickEntrySubmit} className="grid gap-4 md:grid-cols-4">
-              <div className="grid gap-2">
-                <Label htmlFor="project">Project</Label>
-                <Input id="project" placeholder="e.g. HRMS Project" value={project} onChange={(e) => setProject(e.target.value)} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="task">Task Description</Label>
-                <Input id="task" placeholder="e.g. Refactored dashboard" value={task} onChange={(e) => setTask(e.target.value)} />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="hours">Hours</Label>
-                <Input id="hours" type="number" placeholder="e.g. 2" value={hours} onChange={(e) => setHours(e.target.value)} />
-              </div>
-              <div className="self-end">
-                <Button type="submit" className="w-full">Log Time</Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
+          </DashboardBlock>
+        </Grid>
+
+        {/* Leave Balance */}
+        <Grid item xs={12} md={4}>
+          <DashboardBlock title="Leave Balance" icon={<AccountBalanceWalletIcon />}>
+            <Typography variant="body2">Annual Leave: {leaveBalance.annual}</Typography>
+            <Typography variant="body2">Sick Leave: {leaveBalance.sick}</Typography>
+            <Typography variant="body2">Casual Leave: {leaveBalance.casual}</Typography>
+          </DashboardBlock>
+        </Grid>
+
+        {/* Attendance Summary */}
+        <Grid item xs={12} md={4}>
+          <DashboardBlock title="Attendance Summary" icon={<CheckCircleOutlineIcon />}>
+            <Typography variant="body2">
+              Worked Days: {attendanceSummary.workedDays} / {attendanceSummary.totalDays}
+            </Typography>
+          </DashboardBlock>
+        </Grid>
+      </Grid>
     </DashboardLayout>
   );
 };
